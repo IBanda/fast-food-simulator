@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="app">
+
+        <div class="control-panel">
+            <h1>Control Panel</h1>
+            <fieldset>
+                <legend>Intervals</legend>
+                <label for="arrival">Customer Arrival</label>
+                <input id="arrival" class="customer-arrival" type="number">
+                <br>
+                <label for="fulfilement">Order fulfilement</label>
+                <br>
+                <input id="fulfilement" class="order-fulfilment" type="number">
+                <button class="control-btn" type="button">Start</button>
+            </fieldset>
+        </div>
+        <div class="simulator-container">
+
+            <div class="simulator">
+                <div class="simulation-panel order-line-area">
+                    <h3>
+                        Order Line Area
+                    </h3>
+                    Number of customers waiting:
+                    <div class="waiting-customers text-box">
+                        0
+                    </div>
+                </div>
+                <div class="simulation-panel order-area">
+                    <h3>
+                        Order Area
+                    </h3>
+                    Current Order:
+                    <div class="text-box current-order">
+                        -
+                    </div>
+                </div>
+                <div class="simulation-panel kitchen-area">
+                    <h3>
+                        Kitchen area
+                    </h3>
+                    Order being Prepared:
+                    <div class="text-box order-being-prepared">
+                        -
+                    </div>
+                    Total Waiting Orders
+                    <div class="text-box total-waiting-orders">
+                        -
+                    </div>
+                    Waiting List
+                    <ol class="waiting-orders-list"></ol>
+                </div>
+                <div class="simulation-panel pickup-line">
+                    <h3>
+                        Pickup Line
+                    </h3>
+                    Ready for Pickup
+                    <div class="text-box ready-pickup">
+                        -
+                    </div>
+                    Total Customers Waiting
+                    <div class="text-box total-waiting-cus">
+                        -
+                    </div>
+                    <!-- Collecting Customer Ticket
+                    <div class="text-box collecting-cus">
+                        -
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="./simulator.js"></script>
+</body>
+
+</html>
