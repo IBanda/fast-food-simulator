@@ -4,9 +4,9 @@ class OrderTaker {
   constructor() {
     this.ticketNo = null;
   }
-  createTicket(interval, ticketNo) {
+  createTicket(ticketNo) {
     this.ticketNo = ticketNo;
-    let ticket = new Ticket(interval, this.ticketNo);
+    let ticket = new Ticket(this.ticketNo);
     return ticket;
   }
 }

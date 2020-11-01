@@ -12,8 +12,11 @@ let orderLine = new Queue();
 let serviceQueue = new Queue();
 
 let orderTaker = new OrderTaker();
-let arrivalInterval = document.querySelector('.customer-arrival');
-let fulfilmentInterval = document.querySelector('.order-fulfilment');
+let arrivalInterval = document.querySelector('.arrival-interval');
+let fulfilmentInterval = document.querySelector('.fulfilment-interval');
+let createTicketInterval = document.querySelector('.ticket-creation-interval');
+let serveInterval = document.querySelector('.serve-interval');
+let simulationDuration = document.querySelector('.duration');
 let controlButton = document.querySelector('.control-btn');
 let waitingCustomers = document.querySelector('.waiting-customers');
 let currentOrder = document.querySelector('.current-order');
@@ -24,22 +27,20 @@ let readyPickup = document.querySelector('.ready-pickup');
 let customersInServiceLine = document.querySelector('.total-waiting-cus');
 let orderInProgress = false;
 let isFirstCustomer = false;
-let arrivalValue;
-let isRunning;
-let fulfilmentValue;
+let arrivalIntervalValue;
+let fulfilmentIntervalValue;
+let ticketCreationInterval;
+let serveIntervalValue;
+let duration;
+let isRunning = { running: null };
 
 function start() {
-  isRunning = isRunning ? false : true;
-  this.textContent = isRunning ? 'Stop' : 'Start';
-  arrivalValue = arrivalInterval.value;
-  fulfilmentValue = fulfilmentInterval.value;
-  arrivalInterval.value = 0;
-  fulfilmentInterval.value = 0;
-  createCustomers();
+  setSimulationState.bind(controlButton)();
 }
 
 function checkOrderLine(customer) {
   let count;
+
   if (orderInProgress || !orderLine.isEmpty()) {
     orderLine.add(customer);
     count = orderLine.size();
@@ -48,25 +49,27 @@ function checkOrderLine(customer) {
   }
   waitingCustomers.textContent = count ? count : 0;
 }
+function takeNextOrder() {
+  if (orderLine.isEmpty()) return;
+  createOrder(orderLine.remove());
+  waitingCustomers.textContent = orderLine.size();
+}
 
 function createCustomers() {
-  // let count = 1;
   if (paidCustomerWaitingQueue.isEmpty() && !isFirstCustomer) {
     let customer = new Customer();
     checkOrderLine(customer);
+
     isFirstCustomer = true;
     createCustomers();
-    // count++;
   } else {
     let interval = setInterval(() => {
       let customer = new Customer();
-      if (!isRunning) {
+      if (!isRunning.running) {
         return clearInterval(interval);
       }
-      //Clear the Interval
       checkOrderLine(customer);
-      // count++;
-    }, convertToMilliseconds(arrivalValue));
+    }, arrivalIntervalValue);
   }
 }
 
@@ -74,17 +77,11 @@ function createOrder(customer) {
   orderInProgress = true;
   let ticketNo = generateUUID();
   currentOrder.textContent = ticketNo;
-  // simulateAction(orderTaker.createTicket())
-  new Promise((resolve) => {
-    let timeout = setTimeout(() => {
-      if (!isRunning) {
-        throw Error('Stopped Game');
-      }
-      resolve(orderTaker.createTicket(fulfilmentValue, ticketNo));
-    }, 5000);
-    //Clear Timeout
-    return timeout;
-  })
+  simulateAction(
+    orderTaker.createTicket(ticketNo),
+    ticketCreationInterval,
+    isRunning
+  )
     .then((ticket) => {
       customer.ticketNo = ticket.orderNo;
       paidCustomerWaitingQueue.add(customer);
@@ -94,17 +91,11 @@ function createOrder(customer) {
       kitchenQueue.add(ticket);
     })
     .then(() => {
-      //check if running
       takeNextOrder();
       prepare();
     });
 }
 
-function takeNextOrder() {
-  if (orderLine.isEmpty()) return;
-  createOrder(orderLine.remove());
-  waitingCustomers.textContent = orderLine.size();
-}
 let isStillPreparing;
 let addedToWaitingList = [];
 function prepare() {
@@ -114,16 +105,19 @@ function prepare() {
     totalWaitingOrders.textContent = kitchenQueue.size();
     orderBeingPrepared.textContent = currentTicket.orderNo;
     let order = new Order(currentTicket.orderNo);
-    new Promise((resolve) => {
-      resolve(currentTicket.prepare(order));
-    })
+    simulateAction(
+      currentTicket.prepare(order),
+      fulfilmentIntervalValue,
+      isRunning
+    )
       .then((order) => {
         serviceQueue.add({ order, done: currentTicket.done });
       })
-      .finally(() => {
+      .then(() => {
         isStillPreparing = false;
         if (addedToWaitingList.length) removeFromWaitingList();
         orderBeingPrepared.textContent = '-';
+
         if (!kitchenQueue.isEmpty()) prepare();
         service();
       });
@@ -151,22 +145,57 @@ function service() {
     } = readyOrder;
     readyPickup.textContent = orderNo;
     isAvailableForPickup = true;
-    // simulateAction(readyOrder.done(),)
-    new Promise((resolve) => {
-      resolve(readyOrder.done());
-    })
-      .then(() => {
-        let x = paidCustomerWaitingQueue.remove();
-        console.log(x.ticketNo);
+    simulateAction(readyOrder.done(), serveIntervalValue, isRunning).then(
+      () => {
+        paidCustomerWaitingQueue.remove();
         customersInServiceLine.textContent = paidCustomerWaitingQueue.size();
         isAvailableForPickup = false;
         if (!serviceQueue.isEmpty()) service();
-      })
-      .finally(() => {
         readyPickup.textContent = '-';
-      });
+      }
+    );
   } else {
     customersInServiceLine.textContent = paidCustomerWaitingQueue.size();
   }
 }
+
+function setSimulationState() {
+  let { running } = isRunning;
+  if (running === false) {
+    window.location.reload();
+  }
+  isRunning.running = running ? false : true;
+  this.textContent = isRunning.running ? 'Stop' : 'Reset';
+  getStartUpValues();
+}
+
+function getStartUpValues() {
+  arrivalIntervalValue = convertToMilliseconds(arrivalInterval.value);
+  fulfilmentIntervalValue = convertToMilliseconds(fulfilmentInterval.value);
+  ticketCreationInterval = convertToMilliseconds(createTicketInterval.value);
+  serveIntervalValue = convertToMilliseconds(serveInterval.value);
+  duration = convertToMilliseconds(simulationDuration.value);
+  if (
+    arrivalIntervalValue < 0 ||
+    fulfilmentInterval < 0 ||
+    ticketCreationInterval < 0 ||
+    serveIntervalValue < 0 ||
+    duration < 0
+  ) {
+    return alert('Intervals should be greater than or equal to zero');
+  }
+  if (duration) {
+    setSimulationDuration(duration);
+  }
+
+  createCustomers();
+}
+
+function setSimulationDuration(duration) {
+  simulateAction(null, duration, isRunning).then(() => start());
+}
+
 controlButton.onclick = start;
+window.onerror = function () {
+  console.log('Simulation Stopped');
+};

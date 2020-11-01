@@ -9,18 +9,49 @@
 </head>
 
 <body>
+    <div class="header">
+        <h1>Fast Food Simulator</h1>
+    </div>
     <div class="app">
-
         <div class="control-panel">
             <h1>Control Panel</h1>
-            <fieldset>
-                <legend>Intervals</legend>
-                <label for="arrival">Customer Arrival</label>
-                <input id="arrival" class="customer-arrival" type="number">
+            <fieldset class="control-panel-inputs">
+                <legend>Intervals in Seconds</legend>
+                <div class="input-wrapper">
+
+                    <label for="arrival">Customer Arrival</label>
+                    <input id="arrival" min="0" class="arrival-interval" type="number">
+                </div>
                 <br>
-                <label for="fulfilement">Order fulfilement</label>
+                <div class="input-wrapper">
+
+                    <label for="fulfilement">Order fulfilement</label>
+                    <br>
+                    <input id="fulfilement" min="0" class="fulfilment-interval" type="number">
+                </div>
                 <br>
-                <input id="fulfilement" class="order-fulfilment" type="number">
+                <div class="input-wrapper">
+
+                    <label for="ticket">Ticket Creation</label>
+                    <br>
+                    <input id="ticket" min="0" class="ticket-creation-interval" type="number">
+                </div>
+
+                <br>
+                <div class="input-wrapper">
+                    <label for="serve">Deliver to Customer from Server</label>
+                    <br>
+                    <input id="serve" min="0" class="serve-interval" type="number">
+                </div>
+                <br>
+                <div class="input-wrapper">
+
+                    <label for="duration">Simulation Duration</label>
+                    <br>
+                    <input id="duration" min="0" class="duration" type="number">
+                </div>
+                <br>
+
                 <button class="control-btn" type="button">Start</button>
             </fieldset>
         </div>
@@ -31,19 +62,21 @@
                     <h3>
                         Order Line Area
                     </h3>
-                    Number of customers waiting:
+                    Customers waiting to make an order
                     <div class="waiting-customers text-box">
                         0
                     </div>
+                    <img class="actor customer" src="./images/customer.png" alt="customer">
                 </div>
                 <div class="simulation-panel order-area">
                     <h3>
                         Order Area
                     </h3>
-                    Current Order:
+                    Order being taken
                     <div class="text-box current-order">
                         -
                     </div>
+                    <img class="actor ticket" src="./images/ticket.png" alt="ticket">
                 </div>
                 <div class="simulation-panel kitchen-area">
                     <h3>
@@ -59,6 +92,7 @@
                     </div>
                     Waiting List
                     <ol class="waiting-orders-list"></ol>
+                    <img class="actor order" src="./images/order.png" alt="order">
                 </div>
                 <div class="simulation-panel pickup-line">
                     <h3>

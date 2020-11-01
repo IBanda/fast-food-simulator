@@ -1,16 +1,12 @@
-import convertToMilliseconds from '../utils/convertToMilliseconds.js';
 class Ticket {
-  constructor(interval, orderNo) {
-    this.timeInterval = convertToMilliseconds(interval);
+  constructor(orderNo) {
     this.orderNo = orderNo;
   }
   prepare(value) {
-    return new Promise((resolve) =>
-      setTimeout(() => resolve(value), this.timeInterval)
-    );
+    return new Promise((resolve) => resolve(value));
   }
   done(value) {
-    return new Promise((resolve) => setTimeout(() => resolve(value), 2000));
+    return new Promise((resolve) => resolve(value));
   }
 }
 

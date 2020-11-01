@@ -10,17 +10,37 @@ h3 {
     margin-bottom: .5rem;
 }
 
-.app {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    grid-template-rows: 1fr;
+.header {
+    text-align: center;
+    color: #000;
 }
 
 .control-panel {
-    width: 300px;
-    height: 200px;
     background-color: bisque;
     padding: 1em;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.control-panel-inputs {
+    display: flex;
+}
+
+.input-wrapper {
+    margin-right: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 5px 2px;
+    margin-bottom: .5em;
+    border-radius: 5px;
+}
+
+button {
+    width: 5em;
+    padding: .5em;
+    margin: auto;
 }
 
 .simulator-container {
@@ -29,17 +49,16 @@ h3 {
 }
 
 .simulator {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    display: flex
 }
 
 .simulation-panel {
     width: 350px;
-    height: 350px;
+    height: 450px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
     justify-content: center
 }
 
@@ -54,8 +73,10 @@ h3 {
     background-color: #fff;
     color: #000;
     display: flex;
+    font-size: 20px;
     align-items: center;
     justify-content: center;
+    margin: .5em 0;
 }
 
 .current-order,
@@ -70,7 +91,7 @@ h3 {
 }
 
 .kitchen-area {
-    background-color: #162447;
+    background-color: #51adcf;
     color: #fff;
 }
 
@@ -81,9 +102,20 @@ h3 {
     height: 100px;
     overflow-y: auto;
     width: 8em;
+    margin-top: .5em;
     background-color: #fff;
 }
 
 .pickup-line {
     background-color: #f78259;
+}
+
+.actor {
+    max-width: 60px;
+    width: 100%;
+    position: absolute;
+    transition: visibility 1000ms;
+    display: none;
+    top: 10px;
+    z-index: 10;
 }
